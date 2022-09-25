@@ -16,3 +16,17 @@ html {
 body {
   margin-bottom: 60px;
 }
+.img-box {
+    max-width: 1000px;
+    height: 600px;
+    left: 50%;
+    margin-left: auto;
+    margin-right: auto;
+}
+#map {
+    margin-top: 25px;
+    max-width: 1000px;
+    height: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
