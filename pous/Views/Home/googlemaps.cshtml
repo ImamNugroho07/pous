@@ -15,3 +15,15 @@
       src="https://www.google.com/maps/embed/v1/MAP_MODE?key=AIzaSyAKvrm4OcpRfkBuvealQ_9oG16xH5uf2fY&parameters"
       defer
     ></script>
+    <script>
+    let map;
+    function initMap() {
+        map = new google.maps.Map(document.getElementById("map"), {
+            center: { lat: -34.397, lng: 150.644 },
+            zoom: 8,
+        });
+    }
+
+    window.initMap = initMap;
+
+    </script>
