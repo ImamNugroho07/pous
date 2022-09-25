@@ -8,6 +8,12 @@ function initMap() {
 
 window.initMap = initMap;
 
+var mapl = L.map('mapl').setView([51.505, -0.09], 13);
+L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '© OpenStreetMap'
+}).addTo(mapl);
+
 const panorama = new PANOLENS.ImagePanorama("/images/WhatsApp Image 2022-08-27 at 18.00.43.jpeg");
 const container = document.querySelector(".img-box");
 const viewer = new PANOLENS.Viewer({
@@ -33,3 +39,4 @@ panorama.addEventListener("click", function (e) {
 function close() {
     alert("hahahahah")
 }
+

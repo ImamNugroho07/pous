@@ -30,6 +30,10 @@ namespace pous.Controllers
         {
             return View();
         }
+        public IActionResult leaflet()
+        {
+            return View();
+        }
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
