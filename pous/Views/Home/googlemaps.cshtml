@@ -10,11 +10,16 @@
         <a href="https://mapsplatform.google.com/pricing/?authuser=1" target="_blank">Pricing</a>
         <a href="https://console.cloud.google.com/getting-started?authuser=1" target="_blank"> | Learn API</a>
         <br />
-        <div id ="map"  style="border:black; border-width:1px; border-style:solid;" ></div>
+        <div id="wrapper">
+        <div id="mapBox"></div>
+        <div id="marker">
+        </div>
+    </div>
+    <div id="dragStatus"></div>
         <button type="button" class="btn btn-info btn-lg" id = "continue">Continue</button>
     </div>
 </div>
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAKvrm4OcpRfkBuvealQ_9oG16xH5uf2fY&callback=initMap"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAXkPP9u2NJMjVncw2QLrSew1WeOA_a1zU&callback=initMap"></script>
     <script>
         var x = document.getElementById("map");
         let map, infoWindow;
@@ -27,21 +32,23 @@
                             lng: position.coords.longitude,
                         };
 
-                        map = new google.maps.Map(document.getElementById("map"), {
-                            center: pos,
-                            zoom: 16,
+                        var map = new google.maps.Map(document.getElementById('mapBox'), {
+                            zoom: 18,
+                            center: pos
                         });
 
-                        marker = new google.maps.Marker({
-                            map,
-                            draggable: true,
-                            animation: google.maps.Animation.DROP,
-                            position: pos,
+                        google.maps.event.addListener(map, 'drag', function() {
+                          loc(map);
                         });
-                        marker.addListener("click", toggleBounce);
+
+                        function loc(map) {
+                            var x = map.getCenter();
+                            document.getElementById('dragStatus').innerHTML = x.lat() + ', ' + x.lng();
+                        }
+
                         $( "#continue" ).click(function() {
                             $.post('/Home/Placeload',  // url
-                            { lat: marker.getPosition().lat(), lng: marker.getPosition().lng() },
+                            { lat: map.getCenter().lat(), lng: map.getCenter().lng() },
                             function(){
                                 var urlToRedirect= "@Url.Action("Place","Home")";
                                 window.location.href = urlToRedirect;
