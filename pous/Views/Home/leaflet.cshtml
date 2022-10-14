@@ -1,4 +1,6 @@
-﻿@{
+﻿@using pous.Models
+@model List<Data>;
+@{
     ViewData["Title"] = "Leaflet Page";
 }
 
@@ -6,16 +8,38 @@
     <div>
         <h1>Leaflet</h1>
         <br />
+        <div class = "row"></div>
         <div id ="mapl"  style="border:black; border-width:1px; border-style:solid;" ></div>
     </div>
 </div>
+
+
+
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.1/dist/leaflet.css" integrity="sha256-sA+zWATbFveLLNqWO2gtiw3HL/lh1giY/Inf1BJ0z14=" crossorigin="" />
     <script src="https://unpkg.com/leaflet@1.9.1/dist/leaflet.js" integrity="sha256-NDI0K41gVbWqfkkaHj15IzU7PtMoelkzyKp8TOaFQ3s=" crossorigin=""></script>
+    <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
     <script>
-    var mapl = L.map('mapl').setView([51.505, -0.09], 13);
+     navigator.geolocation.getCurrentPosition(
+          (position) => {
+               const pos = {
+                   lat: position.coords.latitude,
+                   lng: position.coords.longitude,
+                        };
+    var mapl = L.map('mapl').setView([pos.lat, pos.lng], 13);
         L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,
             attribution: '© OpenStreetMap'
         }).addTo(mapl);
-
+    $('.row').append(`<h5 class="card-title">`+ pos.lat+ " " + pos.lng +`</h5>`)
+    var marker = L.marker([pos.lat, pos.lng]).addTo(mapl);
+    //L.Routing.control({
+    //      waypoints: [
+    //        L.latLng(57.74, 11.94),
+    //        L.latLng(57.6792, 11.949)
+    //      ]
+    //    }).addTo(mapl);
+    @for(var i = 0; i< @Model.Count(); i++){
+        @: L.marker([@Model[i].Lat,@Model[i].Lon]).addTo(mapl);
+    }
+          });
     </script>

@@ -16,7 +16,7 @@
     const container = document.querySelector(".img-box");
     const viewer = new PANOLENS.Viewer({
         container: container,
-            autoHideInfospot: false
+            //autoHideInfospot: false
         });
     viewer.add(panorama);
 
@@ -26,7 +26,7 @@
         const a = viewer.raycaster.intersectObject(viewer.panorama, true)[0].point;
         infospot.position.set(-a.x, a.y, a.z);
         panorama.add(infospot);
-        $(".img-box").trigger('click');
+        //$(".img-box").trigger('click');
 
         alert("x = " + -a.x + " y = "+a.y + " z = "+a.z);
 

@@ -1,0 +1,67 @@
+﻿@using pous.Models
+@model List<Data>;
+@{
+    ViewData["Title"] = "panolens Page";
+}
+<div class="text-center">
+    <div>
+        <h1>Cafe List</h1>
+        <br>
+        <div>
+        <a href="#" class="card-link" onclick = "def()">Default</a>
+        <a href="#" class="card-link" onclick = "nearest()">Nearest to your place</a>
+        <a href="@Url.Action("googlemaps","Home")" class="card-link">take place</a>
+        </div>
+        <div class = "loc">
+            
+        </div>
+        <br>
+        <div class="row">
+         @foreach(var item in @ViewBag.data)
+          {
+            <div id = "place" class="card" style="width: 18rem;">
+              <div class="card-body">
+                    <h5 class="card-title">@item.Name</h5>
+                    <p class="card-text">@item.Lat</p>
+                    <p class="card-text">@item.Lon</p>
+                        @if(item.distance != null)
+                        {
+                           <p id="dis">
+                               @item.distance.ToString("0.##") Km</p>
+                        }
+                    <a href="#" class="card-link">see place</a>
+                    <a href="#" class="card-link">another link</a>
+              </div>
+            </div>
+          }
+        </div>
+    </div>
+</div>
+
+<script>
+    function nearest() {
+      if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+          (position) => {
+               const pos = {
+                   lat: position.coords.latitude,
+                   lng: position.coords.longitude,
+                        };
+                    $.post('/Home/Placeload',  // url
+                    { lat: pos.lat, lng:pos.lng },
+                    function(){
+                        var urlToRedirect= "@Url.Action("Place","Home")";
+                        window.location.href = urlToRedirect;
+                    })
+                },error => console.log(error),
+                    {enableHighAccuracy: true,maximumAge:10000, timeout:5000 });
+      }}
+      function def() {
+          $.post('/Home/Placeload',
+                    {},
+                    function(data){
+                        var urlToRedirect= "@Url.Action("Place","Home")";
+                        window.location.href = urlToRedirect;
+                   })
+      }
+</script>
