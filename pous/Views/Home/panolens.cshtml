@@ -3,35 +3,119 @@
 }
 
 <div class="text-center">
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+              <div>
+                    <label for="type">Choose type:</label>
+                      <select name="type" id="type">
+                        <option value="place">place</option>
+                        <option value="stuff">stuff</option>
+                      </select>
+              </div>
+              <div>
+                  <label for="fname">Name : </label>
+                  <input type="text" id="name" name="name">
+              </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" id = "btncls" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" onclick = "submit()">Save changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
     <div>
         <h1>Panolens Demo</h1>
         <br />
-         <div class="img-box"></div> 
-    </div>
+        <div class="row">
+          <div class="column1">
+              <table class="table">
+                  <thead>
+                    <tr>
+                      <th scope="col">#</th>
+                      <th scope="col">Type</th>
+                      <th scope="col">Label</th>
+                      <th scope="col">Coor</th>
+                    </tr>
+                  </thead>
+                  <tbody id = "data">
+                  </tbody>
+                </table>
+                <button type="button" class="btn btn-primary">Add Stuff</button>
+                <button type="button" id="myBtn" class="btn btn-primary">Add Room</button>
+                <button type="button" id = "btn" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" hidden>
+                  Launch demo modal
+                </button>
+          </div>
+          <div class="column2">
+               <div class="img-box"></div>
+                <input type="hidden" id="coor" value ="">
+          </div>
+        </div>
+     </div>
 </div>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r105/three.min.js" integrity="sha512-uWKImujbh9CwNa8Eey5s8vlHDB4o1HhrVszkympkm5ciYTnUEQv3t4QHU02CUqPtdKTg62FsHo12x63q6u0wmg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="~/js/panolens.min.js"></script>
     <script>
+
+    var typed = []
+    var labeld = []
+    var coord = []
+
     const panorama = new PANOLENS.ImagePanorama("/images/WhatsApp Image 2022-08-27 at 18.00.43.jpeg");
     const container = document.querySelector(".img-box");
     const viewer = new PANOLENS.Viewer({
         container: container,
-            //autoHideInfospot: false
+            autoHideInfospot: false
         });
     viewer.add(panorama);
 
-    var infospot = new PANOLENS.Infospot(100, PANOLENS.DataImage.Info, true);
-    panorama.addEventListener("click", function (e) {
-        if (e.intersects.length > 0) return;
-        const a = viewer.raycaster.intersectObject(viewer.panorama, true)[0].point;
-        infospot.position.set(-a.x, a.y, a.z);
+    function pano(){
+        var infospot = new PANOLENS.Infospot(300, PANOLENS.DataImage.Info, true);
+        infospot.position.set(-0,0,10000000);  
+        infospot.addHoverText("click Again to Continue")
         panorama.add(infospot);
-        //$(".img-box").trigger('click');
-
-        alert("x = " + -a.x + " y = "+a.y + " z = "+a.z);
-
-
-        //infospot.addHoverElement(document.getElementById('pp'), -20);
-    
+        panorama.addEventListener("click", function (e) {
+            if (e.intersects.length > 0) return;
+            const a = viewer.raycaster.intersectObject(viewer.panorama, true)[0].point;
+            infospot.position.set(-a.x, a.y, a.z);  
+            document.getElementById('coor').value = JSON.stringify(a)
+        });
+        infospot.addEventListener("click", function (e) {
+        $("#btn").click() 
     });
+    }
+    pano()
+
+    function submit()
+    {
+        var type = $("#type").val()
+        var name = $("#name").val()
+        var coor = JSON.parse($("#coor").val())
+        $("#data").append(`<tr>
+                      <th scope="col">1</th>
+                      <th scope="col">`+type+`</th>
+                      <th scope="col">`+name+`</th>
+                      <th scope="col">`+(coor.x)+`</th>
+                    </tr>`)
+        $("#btncls").click()
+        var infospot = new PANOLENS.Infospot(300, PANOLENS.DataImage.Info, true); 
+        infospot.addHoverText(name+" / "+type)
+        infospot.position.set(-coor.x, coor.y, coor.z);  
+        panorama.add(infospot);
+        typed.push(type)
+        labeld.push(name)
+        coord.push(coor)
+        pano()
+    }
     </script>

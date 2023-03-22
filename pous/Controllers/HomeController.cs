@@ -6,15 +6,12 @@ using System.Text.Json;
 
 namespace pous.Controllers
 {
-    public class HomeController : Microsoft.AspNetCore.Mvc.Controller
+    public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger)
+        public IActionResult Login()
         {
-            _logger = logger;
+            return View();
         }
-
         public IActionResult Index()
         {
             return View();
@@ -22,24 +19,48 @@ namespace pous.Controllers
 
         public IActionResult Privacy()
         {
+            string check = valid();
+            if (check != "Valid")
+            {
+                return RedirectToAction("Login", "Home");
+            }
             return View();
         }
         public IActionResult panolens()
         {
+            string check = valid();
+            if (check != "Valid")
+            {
+                return RedirectToAction("Login", "Home");
+            }
             return View();
         }
         public IActionResult googlemaps()
         {
-
+            string check = valid();
+            if (check != "Valid")
+            {
+                return RedirectToAction("Login", "Home");
+            }
             return View();
         }
         public IActionResult leaflet()
         {
+            string check = valid();
+            if (check != "Valid")
+            {
+                return RedirectToAction("Login", "Home");
+            }
             var citymaps = a();
             return View(citymaps);
         }
         public IActionResult Place()
         {
+            string check = valid();
+            if (check != "Valid")
+            {
+                return RedirectToAction("Login", "Home");
+            }
             List<Data> data = HttpContext.Session.GetObject("data");
             if (data == null)
             {
@@ -97,10 +118,15 @@ namespace pous.Controllers
         }
         [HttpPost]
         public ActionResult Placeload(double? lat, double? lng)
-        {       
-            if(lat == null || lng == null)
+        {
+            string check = valid();
+            if (check != "Valid")
             {
-                HttpContext.Session.SetObject("data", null);
+                return RedirectToAction("Login", "Home");
+            }
+            if (lat == null || lng == null)
+            {
+                HttpContext.Session.Remove("data");
             }
             else
             {
@@ -120,9 +146,43 @@ namespace pous.Controllers
             }
             return Json(new { status = "true", msg = "Redirect now" });
         }
+        [HttpPost]
+        public ActionResult submitLogin(string username, string password)
+        {
+            if (username == "hehe@gmail.com" && password == "123")
+            {
+                HttpContext.Session.SetString("user", "afcsgbxha;kjcakjbcahsbjhabcshchsc.bc.k");
+                return Json(new { status = "true", msg = "Redirect now" });
+            }
+            return Json(new { status = "faield", msg = "Wrong Password" });
+        }
         public double rad(double val)
         {
             return (Math.PI / 180) * val;
         }
+        public class user
+        {
+            public string? username { get; set; }
+            public string? password { get; set; }
+
+        }
+        public string valid()
+        {
+            var user = HttpContext.Session.GetString("user");
+            if (user != null)
+            {
+                if (user.ToString() == "afcsgbxha;kjcakjbcahsbjhabcshchsc.bc.k")
+                {
+                    return "Valid";
+                }
+            }
+            return "notValid";
+        }
+        public IActionResult LogOut()
+        {
+            HttpContext.Session.Remove("user");
+            return RedirectToAction("Login", "Home"); ;
+        }
+
     }
 }
